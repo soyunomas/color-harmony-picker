@@ -1,6 +1,6 @@
 # 🎨 Color Harmony Picker
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Demo - Selector Avanzado](https://img.shields.io/badge/Demo-Selector_Avanzado-brightgreen)](https://soyunomas.github.io/color-harmony-picker/selector-avanzado.html) [![Demo - Rueda Cromática](https://img.shields.io/badge/Demo-Rueda_Cromática-brightgreen)](https://soyunomas.github.io/color-harmony-picker/rueda-cromatica.html)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Demo - Selector Avanzado](https://img.shields.io/badge/Demo-Selector_Avanzado-brightgreen)](https://soyunomas.github.io/color-harmony-picker/selector_avanzado.html) [![Demo - Rueda Cromática](https://img.shields.io/badge/Demo-Rueda_Cromática-brightgreen)](https://soyunomas.github.io/color-harmony-picker/rueda_cromatica.html)
 
 Una colección de herramientas web interactivas diseñadas para ayudar a diseñadores y desarrolladores a explorar y generar armonías de color fácilmente. ✨
 
