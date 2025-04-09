@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rueda Cromática Interactiva v5.1 - Sin Borde</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Iconos Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Estilos Personalizados -->
+    <style>
+        body { background-color: #f8f9fa; }
+        .container { max-width: 1140px; }
+
+        /* --- Estilos Rueda Cromática --- */
+        .color-wheel-section { margin-bottom: 1.5rem; }
+        .wheel-selector-container { text-align: center; margin-bottom: 1rem; }
+        .color-wheel-container { display: flex; justify-content: center; align-items: center; padding: 30px; max-width: 380px; margin: 0 auto; background-color: #fff; border-radius: 50%; box-shadow: 0 0.4rem 1.2rem rgba(0,0,0,0.08); }
+        #colorWheelSvg { width: 100%; height: auto; cursor: pointer; }
+
+        #colorWheelSvg path {
+            transition: transform 0.2s ease-out, stroke-width 0.2s ease-out, opacity 0.3s ease;
+            stroke: #fff; /* Borde blanco entre segmentos */
+            stroke-width: 2px;
+        }
+
+        #colorWheelSvg path:hover {
+            transform: scale(1.07);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- BORDE SELECCIONADO ELIMINADO --- */
+        #colorWheelSvg path.selected-segment {
+            /* stroke y stroke-width eliminados */
+            transform: scale(1.05); /* Ligero aumento de escala como feedback */
+            opacity: 1 !important;
+            z-index: 5;
+        }
+
+        #colorWheelSvg.selection-active path:not(.selected-segment) {
+            opacity: 0.55; /* Atenuación de los no seleccionados */
+         }
+
+        #selectedColorFeedback { text-align: center; margin-top: 1rem; margin-bottom: 0; font-size: 0.9em; color: #6c757d; }
+        .selected-base-info { font-weight: bold; padding: 0.3rem 0.6rem; border-radius: 0.25rem; display: inline-block; margin-left: 8px; color: white; border: 1px solid rgba(0,0,0,0.1); }
+
+        /* --- Estilos paletas y muestras (Compactados v5) --- */
+        .palettes-section h2 { margin-bottom: 1.25rem; font-size: 1.5rem; color: #343a40; }
+        .palette-section { margin-bottom: 1.25rem; padding: 1rem; background-color: #fff; border-radius: 0.375rem; box-shadow: 0 0.1rem 0.2rem rgba(0,0,0,.06); }
+        .palette-swatches-container { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+        .color-swatch-small { width: 90px; border-radius: 0.25rem; background-color: #fff; border: 1px solid #dee2e6; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .color-swatch-small:hover { transform: translateY(-3px); box-shadow: 0 3px 6px rgba(0,0,0,0.08); }
+        .swatch-color-area { height: 60px; width: 100%; border-radius: 0.25rem 0.25rem 0 0; border-bottom: 1px solid #dee2e6; }
+        .color-info-small { padding: 0.4rem 0.3rem; text-align: center; font-family: monospace; font-size: 0.7em; line-height: 1.3; color: #212529; overflow-wrap: break-word; word-wrap: break-word; min-height: 60px; display: flex; flex-direction: column; justify-content: center; }
+        .copy-button { font-size: 1.1em; margin-left: 2px; cursor: pointer; opacity: 0.6; color: #6c757d; transition: opacity 0.2s, color 0.2s; vertical-align: middle; }
+        .copy-button:hover { opacity: 1; color: #0d6efd; }
+        .copy-feedback { font-size: 0.9em; color: #198754; font-weight: bold; display: inline-block; margin-left: 3px; }
+        .palette-title { margin-bottom: 0.75rem; padding-bottom: 0.4rem; font-weight: 500; font-size: 1rem; color: #495057; border-bottom: 1px solid #dee2e6; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <header class="text-center mb-4">
+            <h1><i class="bi bi-bezier2"></i> Rueda Cromática Interactiva</h1>
+            <p class="lead">Elige modelo, haz clic en un color y explora sus armonías HSL.</p>
+        </header>
+
+        <div class="row g-4">
+            <div class="col-md-5 col-lg-4">
+                <section class="color-wheel-section">
+                    <div class="wheel-selector-container">
+                       <label for="wheelTypeSelect" class="form-label fw-bold small">Modelo:</label>
+                       <select class="form-select form-select-sm d-inline-block w-auto" id="wheelTypeSelect">
+                           <option value="rgb" selected>RGB/Digital</option>
+                           <option value="ryb">RYB (Trad.)</option>
+                       </select>
+                   </div>
+                   <div class="color-wheel-container">
+                       <svg id="colorWheelSvg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                           <g transform="translate(50,50)"></g>
+                       </svg>
+                   </div>
+                   <div id="selectedColorFeedback" class="text-center mt-2">
+                       <!-- Feedback se inserta aquí -->
+                   </div>
+               </section>
+            </div>
+
+            <div class="col-md-7 col-lg-8">
+                <section class="palettes-section">
+                    <h2 class="mb-3">Esquemas Generados (HSL)</h2>
+                    <div id="paletteDisplay">
+                       <div class="alert alert-info alert-sm">Selecciona un color de la rueda.</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <footer class="text-center text-muted mt-4 mb-3">
+            <small>Creado por SoyUnoMas.</small>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script>
+        // --- TODO EL CÓDIGO JAVASCRIPT (v4.1 / v5) se mantiene igual ---
+        const SVG_NS = "http://www.w3.org/2000/svg"; const NUM_SEGMENTS = 12; const ANGLE_PER_SEGMENT = 360 / NUM_SEGMENTS; const OUTER_RADIUS = 48; const INNER_RADIUS = 25; const COLOR_WHEELS = { rgb: [ { h: 0, s: 100, l: 50 }, { h: 30, s: 100, l: 50 }, { h: 60, s: 100, l: 50 }, { h: 90, s: 100, l: 50 }, { h: 120, s: 100, l: 50 }, { h: 150, s: 100, l: 50 }, { h: 180, s: 100, l: 50 }, { h: 210, s: 100, l: 50 }, { h: 240, s: 100, l: 50 }, { h: 270, s: 100, l: 50 }, { h: 300, s: 100, l: 50 }, { h: 330, s: 100, l: 50 } ], ryb: [ { h: 0, s: 100, l: 50 }, { h: 20, s: 100, l: 50 }, { h: 40, s: 100, l: 50 }, { h: 50, s: 100, l: 50 }, { h: 60, s: 100, l: 50 }, { h: 90, s: 85, l: 55 }, { h: 120, s: 70, l: 40 }, { h: 180, s: 50, l: 45 }, { h: 240, s: 100, l: 50 }, { h: 260, s: 100, l: 50 }, { h: 280, s: 85, l: 50 }, { h: 320, s: 100, l: 50 } ] }; const SCHEMES_TO_DISPLAY = { 'complementary': 'Complementario (HSL)', 'analogous': 'Análogo (HSL)', 'analogous-complementary': 'Análoga Complementaria (HSL)', 'triadic': 'Triádico (HSL)', 'split-complementary': 'Comp. Dividido (HSL)', 'tetradic': 'Tetrádico (HSL)', 'square': 'Cuadrado (HSL)', 'monochromatic': 'Monocromático (HSL)' };
+        const svgWheelGroup = document.querySelector('#colorWheelSvg g'); const paletteDisplay = document.getElementById('paletteDisplay'); const svgElement = document.getElementById('colorWheelSvg'); const selectedColorFeedback = document.getElementById('selectedColorFeedback'); const wheelTypeSelect = document.getElementById('wheelTypeSelect');
+        function hexToRgb(hex) { let s= /^#?([a-f\d])([a-f\d])([a-f\d])$/i;hex=hex.replace(s,(m,r,g,b)=>r+r+g+g+b+b);let r=/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);return r?{r:parseInt(r[1],16),g:parseInt(r[2],16),b:parseInt(r[3],16)}:null; } function rgbToHex(r, g, b) { return "#"+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1).toUpperCase(); } function rgbToHsl(r, g, b) { r/=255;g/=255;b/=255;let m=Math.max(r,g,b),n=Math.min(r,g,b);let h,s,l=(m+n)/2;if(m===n){h=s=0}else{let d=m-n;s=l>.5?d/(2-m-n):d/(m+n);switch(m){case r:h=(g-b)/d+(g<b?6:0);break;case g:h=(b-r)/d+2;break;case b:h=(r-g)/d+4;break}h/=6}return{h:Math.round(h*360),s:Math.round(s*100),l:Math.round(l*100)}; } function hslToRgb(h, s, l) { h/=360;s/=100;l/=100;let r,g,b;if(s===0){r=g=b=l}else{const hue2rgb=(p,q,t)=>{if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p};let q=l<.5?l*(1+s):l+s-l*s;let p=2*l-q;r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3)}return{r:Math.round(r*255),g:Math.round(g*255),b:Math.round(b*255)}; } function getContrastYIQ(hexcolor){ const t=hexToRgb(hexcolor);if(!t)return'text-dark';return((t.r*299)+(t.g*587)+(t.b*114))/1000>=128?'text-dark':'text-light'; }
+        function calculatePalette(baseHsl, scheme) { const { h: e, s: t, l: a } = baseHsl; let o = [baseHsl]; switch (scheme) { case "complementary": o.push({ h: (e + 180) % 360, s: t, l: a }); break; case "analogous": o = [{ h: (e - 30 + 360) % 360, s: t, l: a }, baseHsl, { h: (e + 30) % 360, s: t, l: a }]; break; case "analogous-complementary": o = [{ h: (e - 30 + 360) % 360, s: t, l: a }, baseHsl, { h: (e + 30) % 360, s: t, l: a }, { h: (e + 180) % 360, s: t, l: a }]; break; case "triadic": o = [baseHsl, { h: (e + 120) % 360, s: t, l: a }, { h: (e + 240) % 360, s: t, l: a }]; break; case "split-complementary": o = [baseHsl, { h: (e + 150) % 360, s: t, l: a }, { h: (e + 210) % 360, s: t, l: a }]; break; case "tetradic": o = [baseHsl, { h: (e + 60) % 360, s: t, l: a }, { h: (e + 180) % 360, s: t, l: a }, { h: (e + 240) % 360, s: t, l: a }]; break; case "square": o = [baseHsl, { h: (e + 90) % 360, s: t, l: a }, { h: (e + 180) % 360, s: t, l: a }, { h: (e + 270) % 360, s: t, l: a }]; break; case "monochromatic": o = []; const l = 5, c = 15, s = 5; for (let i = 0; i < l; i++) { const r = i - Math.floor(l / 2); let n = a + r * c, h = t - r * s; n = Math.max(0, Math.min(100, n)), h = Math.max(0, Math.min(100, h)), o.push({ h: e, s: Math.round(h), l: Math.round(n) }) } break } return o }
+        function createWheelSegment(index, hslColor) { const s=index*ANGLE_PER_SEGMENT-90,e=(index+1)*ANGLE_PER_SEGMENT-90,t=s*Math.PI/180,a=e*Math.PI/180,o=OUTER_RADIUS*Math.cos(t),i=OUTER_RADIUS*Math.sin(t),l=OUTER_RADIUS*Math.cos(a),c=OUTER_RADIUS*Math.sin(a),h=INNER_RADIUS*Math.cos(t),d=INNER_RADIUS*Math.sin(t),r=INNER_RADIUS*Math.cos(a),p=INNER_RADIUS*Math.sin(a),u=0,g=`M ${o} ${i} A ${OUTER_RADIUS} ${OUTER_RADIUS} 0 ${u} 1 ${l} ${c} L ${r} ${p} A ${INNER_RADIUS} ${INNER_RADIUS} 0 ${u} 0 ${h} ${d} Z`,f=document.createElementNS(SVG_NS,"path");f.setAttribute("d",g);const w=hslToRgb(hslColor.h,hslColor.s,hslColor.l),S=rgbToHex(w.r,w.g,w.b);return f.setAttribute("fill",S),f.setAttribute("data-hsl",`${hslColor.h},${hslColor.s},${hslColor.l}`),f.setAttribute("data-hex",S),f.addEventListener('click',handleSegmentClick),f; }
+        function createSwatchElement(hslColor) { const t=hslToRgb(hslColor.h,hslColor.s,hslColor.l),e=rgbToHex(t.r,t.g,t.b),a=document.createElement("div");a.className="color-swatch-small";const o=document.createElement("div");o.className="swatch-color-area",o.style.backgroundColor=e;const l=document.createElement("div");return l.className="color-info-small",l.innerHTML=`<div>${e} <i class="bi bi-copy copy-button" data-color="${e}" title="Copiar HEX"></i><span class="copy-feedback"></span></div><div>rgb(${t.r},${t.g},${t.b}) <i class="bi bi-copy copy-button" data-color="rgb(${t.r}, ${t.g}, ${t.b})" title="Copiar RGB"></i><span class="copy-feedback"></span></div><div>hsl(${hslColor.h},${hslColor.s}%,${hslColor.l}%) <i class="bi bi-copy copy-button" data-color="hsl(${hslColor.h}, ${hslColor.s}%, ${hslColor.l}%)" title="Copiar HSL"></i><span class="copy-feedback"></span></div>`,a.appendChild(o),a.appendChild(l),a; }
+        function displayAllPalettes(baseHsl, baseHex) { paletteDisplay.innerHTML = ''; const t = getContrastYIQ(baseHex) === 'text-dark' ? '#212529' : '#f8f9fa'; selectedColorFeedback.innerHTML = `Color Base: <span class="selected-base-info" style="background-color:${baseHex}; color: ${t}">${baseHex}</span>`; for (const e in SCHEMES_TO_DISPLAY) { const a = SCHEMES_TO_DISPLAY[e], o = calculatePalette(baseHsl, e), l = document.createElement("div"); l.className = "palette-section"; const c = document.createElement("h4"); c.className = "palette-title", c.textContent = a, l.appendChild(c); const s = document.createElement("div"); s.className = "palette-swatches-container", o.forEach(t => { const e = createSwatchElement(t); s.appendChild(e); }), l.appendChild(s), paletteDisplay.appendChild(l); } }
+        function handleSegmentClick(event) { svgWheelGroup.querySelectorAll("path").forEach(t=>{t.classList.remove("selected-segment")}),svgElement.classList.remove("selection-active");const e=event.currentTarget;e.classList.add("selected-segment"),svgElement.classList.add("selection-active");const t=e.getAttribute("data-hsl"),[a,o,l]=t.split(",").map(Number),c={h:a,s:o,l:l},s=e.getAttribute("data-hex");displayAllPalettes(c,s); } function updateColorWheel(wheelType) { const t=COLOR_WHEELS[wheelType];if(!t)return void console.error("Tipo de rueda no válido:",wheelType);svgWheelGroup.innerHTML="",svgElement.classList.remove("selection-active"),paletteDisplay.innerHTML='<div class="alert alert-info alert-sm">Selecciona un color de la rueda.</div>',selectedColorFeedback.innerHTML="Haz clic en un segmento...";t.forEach((t,e)=>{const a=createWheelSegment(e,t);svgWheelGroup.appendChild(a)});const e=svgWheelGroup.querySelector("path");e&&setTimeout(()=>e.dispatchEvent(new Event("click")),0); } wheelTypeSelect.addEventListener('change', (event) => { updateColorWheel(event.target.value); }); paletteDisplay.addEventListener('click', function(event) { const t=event.target.closest(".copy-button");if(t){const e=t.dataset.color,a=t.nextElementSibling;paletteDisplay.querySelectorAll(".copy-feedback").forEach(t=>{t.textContent=""}),navigator.clipboard.writeText(e).then(()=>{a.textContent="¡Copiado!",t.classList.remove("bi-copy"),t.classList.add("bi-check-lg"),setTimeout(()=>{a.textContent="",t.classList.remove("bi-check-lg"),t.classList.add("bi-copy")},1500)}).catch(e=>{console.error("Error al copiar: ",e),a.textContent=" Error",a.style.color="red",setTimeout(()=>{a.textContent="",a.style.color="#198754"},1500)})} });
+        updateColorWheel(wheelTypeSelect.value);
+
+    </script>
+</body>
+</html>
