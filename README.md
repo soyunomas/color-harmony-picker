@@ -98,8 +98,6 @@ Para ejecutar este proyecto en tu máquina:
 Este proyecto está bajo la Licencia MIT.
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-*(Puedes añadir un archivo `LICENSE` con el texto completo si lo deseas).*
-
 ## 🧑‍💻 Contacto
 
 Creado por **soyunomas** ([@soyunomas en GitHub](https://github.com/soyunomas))
