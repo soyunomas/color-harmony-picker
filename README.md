@@ -8,8 +8,8 @@ Una colección de herramientas web interactivas diseñadas para ayudar a diseña
 
 Este proyecto ofrece dos interfaces distintas para trabajar con paletas de colores:
 
-1.  Una **Rueda Cromática Interactiva (SVG)** que permite seleccionar colores base de modelos RGB o RYB y visualiza *todas* las armonías HSL estándar simultáneamente.
-2.  Un **Selector de Color Avanzado (iro.js)** que proporciona un selector de color más preciso (rueda/caja/slider) y permite elegir *una armonía específica* para generar y visualizar la paleta resultante.
+1.  Una **Rueda Cromática Interactiva** que permite seleccionar colores base de modelos RGB o RYB y visualiza *todas* las armonías HSL estándar simultáneamente.
+2.  Un **Selector de Color Avanzado** que proporciona un selector de color más preciso (rueda/caja/slider) y permite elegir *una armonía específica* para generar y visualizar la paleta resultante.
 
 Ambas herramientas facilitan la copia de los códigos de color (HEX, RGB, HSL) para su uso inmediato.
 
