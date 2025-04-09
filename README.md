@@ -21,8 +21,8 @@ Ambas herramientas facilitan la copia de los códigos de color (HEX, RGB, HSL) p
 
 Puedes probar las demos en vivo aquí:
 
-*   **[Demo - Selector Avanzado](https://soyunomas.github.io/color-harmony-picker/selector-avanzado.html)**
-*   **[Demo - Rueda Cromática](https://soyunomas.github.io/color-harmony-picker/rueda-cromatica.html)**
+*   **[Demo - Selector Avanzado](https://soyunomas.github.io/color-harmony-picker/selector_avanzado.html)**
+*   **[Demo - Rueda Cromática](https://soyunomas.github.io/color-harmony-picker/rueda_cromatica.html)**
 
 ## ✨ Características Principales
 
